@@ -1,0 +1,4 @@
+#requirements.txt
+#use this file to explain what packages to install as dependancies for your project
+Django==5.1
+djangorestframework==3.15.2
