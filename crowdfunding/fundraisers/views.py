@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from .models import Fundraiser
-from .serializers import FundraiserSerializer
+from .serializers import FundraiserDetailSerializer, FundraiserSerializer, FundraiserDetailSerializer
 from .models import Pledge
 from .serializers import PledgeSerializer
 
@@ -34,7 +34,7 @@ class FundraiserDetail(APIView):
 
     def get(self, request, pk):
         fundraiser = get_object_or_404(Fundraiser, pk=pk)
-        serializer = FundraiserSerializer(fundraiser)
+        serializer = FundraiserDetailSerializer(fundraiser)
         return Response(serializer.data)
     
 class PledgeList(APIView):
