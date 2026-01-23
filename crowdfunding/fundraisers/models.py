@@ -13,7 +13,7 @@ class Fundraiser(models.Model):
 class Pledge(models.Model):
     amount = models.IntegerField()
     comment = models.CharField(max_length=200)
-    anonoymouns = models.BooleanField()
+    anonymous = models.BooleanField()
     fundraiser = models.ForeignKey('Fundraiser', on_delete=models.CASCADE, related_name='pledges')
 
 
