@@ -32,14 +32,17 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'fundraisers.apps.FundraisersConfig',
+    'users.apps.UsersConfig',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles', 
 ]
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
