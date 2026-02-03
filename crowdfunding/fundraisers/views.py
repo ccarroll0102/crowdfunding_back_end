@@ -1,18 +1,21 @@
-from django.http import Http404
-from django.shortcuts import render
 
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from django.shortcuts import get_object_or_404
 from .permissions import IsOwnerOrReadOnly
 from .models import Fundraiser
-from .serializers import FundraiserDetailSerializer, FundraiserSerializer, FundraiserDetailSerializer
+from .serializers import FundraiserDetailSerializer, FundraiserSerializer
 from .models import Pledge
 from .serializers import PledgeSerializer
 
 class FundraiserList(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    permission_classes = [
+      permissions.IsAuthenticatedOrReadOnly,
+      IsOwnerOrReadOnly
+   ]
 
     def get(self, request):
         fundraisers = Fundraiser.objects.all()
@@ -40,12 +43,9 @@ class FundraiserDetail(APIView):
    ]
 
     def get_object(self, pk):
-        try:
-            fundraiser = Fundraiser.objects.get(pk=pk)
-            self.check_object_permissions(self.request, fundraiser)
-            return fundraiser
-        except Fundraiser.DoesNotExist:
-            raise Http404
+        fundraiser = get_object_or_404(Fundraiser, pk=pk)
+        self.check_object_permissions(self.request, fundraiser)
+        return fundraiser
 
     def get(self, request, pk):
         fundraiser = self.get_object(pk)
