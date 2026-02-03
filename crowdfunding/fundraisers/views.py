@@ -48,7 +48,7 @@ class FundraiserDetail(APIView):
             raise Http404
 
     def get(self, request, pk):
-        fundraiser = get_object_or_404(Fundraiser, pk=pk)
+        fundraiser = self.get_object(pk)
         serializer = FundraiserDetailSerializer(fundraiser)
         return Response(serializer.data)
     
