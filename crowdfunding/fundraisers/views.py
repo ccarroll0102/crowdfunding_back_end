@@ -138,12 +138,16 @@ class FundraiserArchive(APIView):
     
     def patch (self, request, pk):
         fundraiser = self.get_object(pk)
+        if fundraiser.is_open == True:
+            return Response(
+                {"detail": "Fundraiser must be closed before it can be archived."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if fundraiser.is_archived:
             return Response(
                 {"detail": "Fundraiser is already archived"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        fundraiser.is_open = False
         fundraiser.is_archived = True
         fundraiser.save()
         serializer = FundraiserDetailSerializer(fundraiser)
@@ -167,6 +171,33 @@ class FundraiserUnarchive(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         fundraiser.is_archived = False
+        fundraiser.save()
+        serializer = FundraiserDetailSerializer(fundraiser)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class FundraiserOpen(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def get_object(self,pk):
+        fundraiser = get_object_or_404(Fundraiser, pk=pk)
+        if fundraiser.is_archived and self.request.user != fundraiser.owner:
+            raise Http404
+        self.check_object_permissions(self.request, fundraiser)
+        return fundraiser
+    
+    def patch (self, request, pk):
+        fundraiser = self.get_object(pk)
+        if fundraiser.is_archived:
+            return Response(
+                {"detail": "Fundraiser is archived and cannot be opened."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if fundraiser.is_open == True:
+            return Response(
+                {"detail": "Fundraiser is already open."}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        fundraiser.is_open = True
         fundraiser.save()
         serializer = FundraiserDetailSerializer(fundraiser)
         return Response(serializer.data, status=status.HTTP_200_OK)
