@@ -93,24 +93,23 @@ Fundraisers have three states:
 ### API Spec
 # 🌐 API Specification
 
-| URL                           | Method  Purpose                            | Request Body     | Success Code | Auth |
-|-------------------------------|-------|------------------------------------|------------------|--------------|---------------|
-| `/fundraisers/`               | GET   | Get all non-archived fundraisers  | –                 | 200          | Public |
-| `/fundraisers/?owner=me`      | GET   | Get all fundraisers owned by 
-                                           current user (including archived)| –                 | 200          | Auth |
-| `/fundraisers/?owner=<id>`    | GET   | Get non-archived fundraisers for 
-                                           a specific user                  | –                 | 200          | Public |
-| `/fundraisers/`               | POST  | Create a fundraiser               | Fundraiser fields.| 201          | Auth |
-| `/fundraisers/<id>/`          | GET   | Get fundraiser details            | –                 | 200          | Public.
-                                                                                                                (archived hidden from non-owner) |
-| `/fundraisers/<id>/`          | PATCH | Edit fundraiser                   | Partial fields.   | 200          | Owner only |
-| `/fundraisers/<id>/close/`    | PATCH | Close fundraiser                  | –                 | 200          | Owner only |
-| `/fundraisers/<id>/open/`     | PATCH | Reopen closed fundraiser          | –                 | 200          | Owner only |
-| `/fundraisers/<id>/archive/`  | PATCH | Archive fundraiser                | –                 | 200          | Owner only |
-| `/fundraisers/<id>/unarchive/`| PATCH | Unarchive fundraiser              | –                 | 200          | Owner only |
-| `/pledges/`                   | GET   | List pledges                      | –                 | 200          | Public |
-| `/pledges/`                   | POST  | Create pledge                     | Pledge fields     | 201          | Auth |
-| `/api-token-auth/`            | POST  | Obtain authentication token       | Username & pword. | 200          | Public |
+| URL | Method | Purpose | Request Body | Success Code | Authentication |
+|-----|--------|---------|--------------|--------------|---------------|
+| `/fundraisers/` | GET | Get all non-archived fundraisers | – | 200 | Public |
+| `/fundraisers/?owner=me` | GET | Get all fundraisers owned by current user (including archived) | – | 200 | Authenticated |
+| `/fundraisers/?owner=<id>` | GET | Get non-archived fundraisers for a specific user | – | 200 | Public |
+| `/fundraisers/` | POST | Create a fundraiser | Fundraiser fields | 201 | Authenticated |
+| `/fundraisers/<id>/` | GET | Get fundraiser details | – | 200 | Public (archived hidden from non-owner) |
+| `/fundraisers/<id>/` | PATCH | Edit fundraiser | Partial fields | 200 | Owner only |
+| `/fundraisers/<id>/close/` | PATCH | Close fundraiser | – | 200 | Owner only |
+| `/fundraisers/<id>/open/` | PATCH | Reopen closed fundraiser | – | 200 | Owner only |
+| `/fundraisers/<id>/archive/` | PATCH | Archive fundraiser (must be closed) | – | 200 | Owner only |
+| `/fundraisers/<id>/unarchive/` | PATCH | Unarchive fundraiser (remains closed) | – | 200 | Owner only |
+| `/pledges/` | GET | List pledges | – | 200 | Public |
+| `/pledges/` | POST | Create pledge | Pledge fields | 201 | Authenticated |
+| `/api-token-auth/` | POST | Obtain authentication token | Username & password | 200 | Public |
+
+---
 
 # 🔐 Permissions Model
 
