@@ -1,73 +1,150 @@
-# Crowdfunding Back End
-{{ SwimRise }}
+# Crowdfunding Back End  
+**Claudia Carroll**
 
 ## Planning:
-### Concept/Name
-{{ Include a short description of your website concept here. }}
+**🏊‍♀️ SwimRise** is a crowdfunding platform designed to help children and families access swimming and surf safety lessons.
+Swim clubs, surf clubs, and families can raise funds for children who cannot afford swimming or nippers (surf life-saving) programs.
+
+This backend provides:
+
+- User authentication (token-based)
+- Fundraiser creation and management
+- Pledge creation
+- Fundraiser state management (Open, Closed, Archived)
+- Ownership-based permissions
 
 ### Intended Audience/User Stories
-{{ A crowdfunding website designed to raise money for children, families swim or beach clubs to fund swimming lessons for children who cannot afford to attend swimming or surf safety (nippers) lessons }}
 
-=> Log in
-    - GET Log in details
-    - GET Sign up details 
-    - Log out
+My crowdfunding back end project enables:
 
-=> Homepage
-    - GET list of available fundraisers
+- Creation of fundraisers
+- Public viewing of active fundraisers
+- Secure pledge submissions
+- Fundraiser lifecycle management (open → closed → archived)
 
-=> "My Profile"
-    - GET details of currently-logged-in user account
-    - PATCH/POST change details of user account
-    - DELETE delete user account
+## 🔐 Authentication
 
-=> Fundraiser page
-    - GET fundraiser information
-    - GET previously made pledge
-    - IF logged in be able to POST a pledge
-    - IF not logged in be prompted to log in to POST a pledge
-    - POST a pledge 
-    - GET the pledge I just in the front end
+- As a user, I can sign up for an account.
+- As a user, I can log in and receive a token.
+- As a logged-in user, I can access protected endpoints.
+- As a user, I can log out.
 
+---
 
-### Front End Pages/Functionality
-- {{ The Homepage }}
-    - {{ Show all of the fundraisers currently available }}
-    - {{ Ability to login }}
-    - {{ Ability to create a fundraiser if logged in }}
-    - {{ Ability to make a pledge to any fundraise if logged in}}
+## 🏠 Homepage / Public View
 
-- {{ Login Page}}
-    - {{ Enter username and password to login }}
-    - {{ Login success and error modals }}
-    - {{ Potential 2FA screen? }}
+- As a visitor, I can view all active fundraisers.
+- As a visitor, I can view details of an open or closed fundraiser.
+- As a visitor, I cannot see archived fundraisers.
+- As a visitor, I must log in to create a pledge.
 
-- {{ A Fundraiser Page}}
-    - {{ Page the shows the detail of a selected fundraited }}
-    - {{ User to see:
-                    1. Fundraiser details (title, descriptionl, image, goal, if open, created date, expiry date?)
-                    2. Ability to add a pledge with associated pledge details
-                    3. Post the pledge and then see it added to the fundraiser
-                    4. view all of the previously made pledges }}
+---
+
+## 👤 My Dashboard
+
+- As a logged-in user, I can:
+  - View all fundraisers I own (including archived).
+  - Create a fundraiser.
+  - Close a fundraiser.
+  - Reopen a fundraiser.
+  - Archive a fundraiser (must be closed first).
+  - Unarchive a fundraiser (remains closed).
+
+---
+
+## 💰 Pledging
+
+- As a logged-in user, I can pledge to an open fundraiser.
+- I cannot pledge to a closed fundraiser.
+- I cannot pledge to an archived fundraiser.
+- If the fundraiser does not exist, I receive a 404 error.
+
+---
+
+# 🔄 Fundraiser States
+
+Fundraisers have three states:
+
+- **Open** → Accepting pledges  
+- **Closed** → Visible but not accepting pledges  
+- **Archived** → Hidden from public but available to the owner  
+
+---
+
+## 🔁 State Transitions
+
+| From | Action | To |
+|------|--------|----|
+| Open | Close | Closed |
+| Closed | Open | Open |
+| Closed | Archive | Archived |
+| Archived | Unarchive | Closed |
+
+## 📋 Business Rules
+
+- Only the owner can modify fundraiser state.
+- Fundraiser must be closed before archiving. 
+- Unarchiving does not automatically reopen the fundraiser.
+- Archived fundraisers are hidden from non-owners.
+- Closed fundraisers remain publicly visible.
+- Cannot pledge to closed or archived fundraisers.
+
 
 ### API Spec
-{{ Fill out the table below to define your endpoints. An example of what this might look like is shown at the bottom of the page. 
+# 🌐 API Specification
 
-It might look messy here in the PDF, but once it's rendered it looks very neat! 
+| URL                           | Method  Purpose                            | Request Body     | Success Code | Auth |
+|-------------------------------|-------|------------------------------------|------------------|--------------|---------------|
+| `/fundraisers/`               | GET   | Get all non-archived fundraisers  | –                 | 200          | Public |
+| `/fundraisers/?owner=me`      | GET   | Get all fundraisers owned by 
+                                           current user (including archived)| –                 | 200          | Auth |
+| `/fundraisers/?owner=<id>`    | GET   | Get non-archived fundraisers for 
+                                           a specific user                  | –                 | 200          | Public |
+| `/fundraisers/`               | POST  | Create a fundraiser               | Fundraiser fields.| 201          | Auth |
+| `/fundraisers/<id>/`          | GET   | Get fundraiser details            | –                 | 200          | Public.
+                                                                                                                (archived hidden from non-owner) |
+| `/fundraisers/<id>/`          | PATCH | Edit fundraiser                   | Partial fields.   | 200          | Owner only |
+| `/fundraisers/<id>/close/`    | PATCH | Close fundraiser                  | –                 | 200          | Owner only |
+| `/fundraisers/<id>/open/`     | PATCH | Reopen closed fundraiser          | –                 | 200          | Owner only |
+| `/fundraisers/<id>/archive/`  | PATCH | Archive fundraiser                | –                 | 200          | Owner only |
+| `/fundraisers/<id>/unarchive/`| PATCH | Unarchive fundraiser              | –                 | 200          | Owner only |
+| `/pledges/`                   | GET   | List pledges                      | –                 | 200          | Public |
+| `/pledges/`                   | POST  | Create pledge                     | Pledge fields     | 201          | Auth |
+| `/api-token-auth/`            | POST  | Obtain authentication token       | Username & pword. | 200          | Public |
 
-It can be helpful to keep the markdown preview open in VS Code so that you can see what you're typing more easily. }}
+# 🔐 Permissions Model
 
-| URL | HTTP Method | Purpose | Request Body | Success Response Code | Authentication/Authorisation |
-| --- | ----------- | ------- | ------------ | --------------------- | ---------------------------- |
-|     |             |         |              |                       |                              |
+- **Public users**:
+  - Can view open and closed fundraisers
+  - Cannot see archived fundraisers
+  - Cannot create pledges without authentication
+
+- **Authenticated users**:
+  - Can create pledges
+  - Can create fundraisers
+
+- **Fundraiser owners**:
+  - Can edit their fundraisers
+  - Can close/open fundraisers
+  - Can archive/unarchive fundraisers
+
+  # 🚀 Future Improvements
+
+Potential future enhancements:
+
+- Expiry date for fundraisers
+- Frontend integration
+
 
 ### DB Schema
-![]( {{ ./relative/path/to/your/schema/image.png }} )
+![]( {{ https://ibb.co/tpw1qDRB}} )
+![]( {{ https://ibb.co/qYhj0KP2}} )
+![]( {{ https://ibb.co/hJn4CK6B}} )
 
 
 
 
---- Method ---
+--- Method personal notes---
 
 create the model
 running a migration will create the database table based on this model

@@ -8,6 +8,5 @@ urlpatterns = [
    path('pledges/', views.PledgeList.as_view()),
    path('fundraisers/<int:pk>/unarchive/', views.FundraiserUnarchive.as_view()),
    path('fundraisers/<int:pk>/close/', views.FundraiserClose.as_view()),
-   path('fundraisers/<int:pk>/open/', views.FundraiserOpen.as_view()),
-
+   path('fundraisers/<int:pk>/open/', views.FundraiserOpen.as_view())
  ]
